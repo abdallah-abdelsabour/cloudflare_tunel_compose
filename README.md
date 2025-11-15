@@ -216,7 +216,7 @@ docker-compose up -d
 
 ## Common Use Cases
 
-### Use Case 1: Exposing Odoo ERP
+### Use Case 1: Exposing Odoo 
 Perfect for accessing your local Odoo development instance from anywhere:
 - Public URL: `https://odoo.yourdomain.com`
 - Service: `http://host.docker.internal:8069`
