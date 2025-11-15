@@ -98,7 +98,6 @@ services:
 **Important Notes:**
 - The `extra_hosts` configuration allows the Docker container to access services running on your host machine
 - Use `host.docker.internal` instead of `localhost` when configuring service URLs
-- Never commit this file with your actual token to a public repository
 
 ---
 
@@ -213,99 +212,7 @@ docker-compose up -d
 
 ---
 
-## Security Best Practices
 
-### Protecting Your Tunnel Token
-
-- **Never commit your token to public repositories** - Add `docker-compose.yml` to `.gitignore` if it contains your token
-- Consider using environment variables:
-  ```yaml
-  command: >
-    tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
-  ```
-- Use Docker secrets for production environments
-- Rotate tokens periodically in the Cloudflare Dashboard
-
-### Additional Security Measures
-
-- **Enable Cloudflare Access**: Add authentication policies to protect your services
-- **Use Access Policies**: Restrict access by email, IP, or geographic location
-- **Monitor Audit Logs**: Regularly review access logs in Cloudflare Zero Trust Dashboard
-- **Enable 2FA**: Protect your Cloudflare account with two-factor authentication
-- **Set up notifications**: Configure alerts for unusual activity
-
-### Recommended Access Policy Example
-
-For Odoo or sensitive applications:
-1. Go to **Zero Trust** > **Access** > **Applications**
-2. Add your application
-3. Create policies requiring:
-   - Email domain verification
-   - One-time PIN
-   - Geographic restrictions
-
----
-
-## Troubleshooting
-
-### Tunnel won't start
-
-**Symptoms**: Container exits immediately or keeps restarting
-
-**Solutions**:
-- Verify your token is correct and properly formatted
-- Check Docker logs: `docker-compose logs cloudflare-tunnel`
-- Ensure Docker has internet access
-- Verify no firewall is blocking outbound connections to Cloudflare
-- Make sure the token hasn't been revoked in Cloudflare Dashboard
-
-### Can't access local service through tunnel
-
-**Symptoms**: Tunnel is running but service isn't accessible
-
-**Solutions**:
-- Verify the local service is running: `netstat -an | grep 8069` (or your port)
-- Confirm you're using `host.docker.internal` instead of `localhost` in Cloudflare configuration
-- Check the port number matches your local service
-- Test local access first: `curl http://localhost:8069`
-- Review the public hostname configuration in Cloudflare Dashboard
-
-### 502 Bad Gateway Error
-
-**Symptoms**: Cloudflare shows "502 Bad Gateway" when accessing your subdomain
-
-**Solutions**:
-- Ensure the local service is actually running
-- Verify the service is listening on the correct port
-- Check Windows Firewall isn't blocking Docker's access to the host
-- Confirm the URL in Cloudflare uses `http://host.docker.internal:PORT` format
-- Test the service locally before testing through the tunnel
-
-### Tunnel connected but traffic not routing
-
-**Symptoms**: Logs show tunnel connected, but accessing subdomain fails
-
-**Solutions**:
-- Check DNS propagation (can take a few minutes)
-- Verify public hostname configuration in Cloudflare Dashboard
-- Clear browser cache and try incognito mode
-- Check if the subdomain resolves: `nslookup your-subdomain.yourdomain.com`
-- Ensure you're accessing via HTTPS (not HTTP)
-
-### Docker container can't access host services
-
-**Symptoms**: 502 errors or connection refused from cloudflared
-
-**Solutions**:
-- Verify `extra_hosts` configuration is present in docker-compose.yml
-- On Windows, ensure Docker Desktop has "Use the WSL 2 based engine" enabled
-- Try restarting Docker Desktop
-- Test connectivity from inside container:
-  ```bash
-  docker exec cloudflare-tunnel ping host.docker.internal
-  ```
-
----
 
 ## Common Use Cases
 
@@ -361,20 +268,7 @@ docker-compose ps
 docker exec -it cloudflare-tunnel sh
 ```
 
-### Cloudflare CLI (Optional)
-Install `cloudflared` locally for advanced management:
-```bash
-# List active tunnels
-cloudflared tunnel list
 
-# Show tunnel info
-cloudflared tunnel info <tunnel-name>
-
-# Delete tunnel (requires stopping container first)
-cloudflared tunnel delete <tunnel-name>
-```
-
----
 
 ## Useful Links
 
